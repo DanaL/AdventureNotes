@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-9" name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>Adventure Notes - {{campaign-name}}</title>
+	<link rel="stylesheet" href="/styles/style.css">
+</head>
+
+<body>
+	<div class="p-2 bg-blue-200">
+		<h1 class="text-white text-xl">Dana's Adventure Notes App</h1>
+	</div>
+
+	<div class="p-2 flex flex-row">
+		<div class="basis-3/4 mr-4">
+			<h1 class="text-lg text-semibold border-b-2 border-red-800 mb-2">{{campaign-name}}</h1>
+
+			<div class="text-sm">Scene Name and navigation would go here</div>
+			<div class="flex flex-row py-2 px-4">
+				<div class="basis-3/4 mr-2">
+					Main content area for current scene
+				</div>
+				<div class="basis-1/4">
+					<textarea class="
+						w-full px-3 py-1.5 text-base text-left
+						font-normal text-gray-400 bg-white 
+						border border-solid border-gray-300 rounded
+						transition ease-in-out m-0 h-96
+						focus:text-gray-600 focus:bg-white focus:border-blue-600 
+						focus:outline-none">{{quick-notes}}</textarea>
+				</div>
+			</div>
+
+		</div class="basis-1/4">
+		<div>
+			Side column
+			<br/><br/></br>
+			stuff
+		</div>
+	</div>
+</body>
+
+</html>
