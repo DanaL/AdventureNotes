@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-9" name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>Dana's Adventure Notes App</title>
+	<link rel="stylesheet" href="/styles/style.css">
+</head>
+
+<body>
+	<div class="p-2 bg-blue-200">
+		<h1 class="text-white text-xl">Dana's Adventure Notes App</h1>
+	</div>
+
+	<div class="px-10 py-2">
+		<ul class="list-disc px-10 py-2">
+			{{#campaign-list}}
+			<li><a class="text-blue-600 hover:text-blue-800" href="scenes/{{campaignID}}">{{name}}</li>
+			{{/campaign-list}}
+		</ul>
+	</div>
+</body>
+
+</html>
+
