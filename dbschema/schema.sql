@@ -33,6 +33,26 @@ CREATE TABLE `Campaigns` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `Scenes`
+--
+
+DROP TABLE IF EXISTS `Scenes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `Scenes` (
+  `sceneID` bigint NOT NULL AUTO_INCREMENT,
+  `campaignID` bigint NOT NULL,
+  `scene_order` int DEFAULT NULL,
+  `title` varchar(250) NOT NULL,
+  `body` text CHARACTER SET utf8 COLLATE utf8_general_ci,
+  `quick_notes` varchar(2000) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  PRIMARY KEY (`sceneID`),
+  KEY `FK_Scenes_campaignID` (`campaignID`),
+  CONSTRAINT `FK_Scenes_campaignID` FOREIGN KEY (`campaignID`) REFERENCES `Campaigns` (`campaignID`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `Users`
 --
 
@@ -55,4 +75,4 @@ CREATE TABLE `Users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-12-27 10:17:10
+-- Dump completed on 2021-12-27 19:55:48
