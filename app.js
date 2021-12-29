@@ -2,6 +2,7 @@ const express = require('express');
 const mustache = require('mustache-express');
 const path = require('path');
 const dblib = require('./dblib');
+const campaigns = require('./campaigns');
 
 const app = express();
 const port = 3000;
@@ -16,17 +17,20 @@ app.use('/styles', express.static('views/styles'));
 const username = 'dana';
 
 app.get('/', (req, res) => {
-	dblib.fetchCampaignsForUser(username, (campaigns) => {
+	campaigns.campaignsLinksForUser(username, (campaigns) => {
 		res.status(200).render('index.html', { "campaign-list": campaigns });
 	});
 });
 
-app.get('/scenes/:campaignID', function (req, res) {
-	const campaignID = req.params.campaignID;
+app.get('/scenes/:sceneID', function (req, res) {
+	const defaultSceneID = req.params.sceneID;
 
-	dblib.fetchCampaign(campaignID, username, (campaign) => {
-		res.render('scenes.html', 
-			{"campaign-name": campaign.name, "quick-notes": "Lorem ipsum etc etc"});
+	campaigns.sceneDetails(defaultSceneID, username, (scene) => {
+			res.render('scenes.html', 
+				{"campaign-name": scene.name, 
+				 "scene-title": scene.title,
+				 "scene-body": scene.body,
+				 "quick-notes": scene.quickNotes });
 		}, 
 		() => { res.redirect("/"); }
 	);
