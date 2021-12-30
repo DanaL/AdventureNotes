@@ -15,7 +15,23 @@
 		<div class="basis-3/4 mr-4">
 			<h1 class="text-lg text-semibold border-b-2 border-blue-800 mb-2">{{campaign-name}}</h1>
 
-			<div class="text-lg">&#171; {{scene-title}} &#187;</div>
+			<div class="text-lg">
+				{{#has-prev-link}}
+					<a class="text-semibold text-blue-600 text-xl" href="/scenes/{{prev-id}}">&#171;</a>
+				{{/has-prev-link}}
+				{{^has-prev-link}}
+					<span class="text-gray-300 text-xl">&#171;</span>
+				{{/has-prev-link}}
+
+				{{scene-title}} 
+
+				{{#has-next-link}}
+					<a class="text-semibold text-blue-600" href="/scenes/{{next-id}}">&#187;</a>
+				{{/has-next-link}}
+				{{^has-next-link}}
+					<span class="text-gray-300 text-xl">&#187;</span>
+				{{/has-next-link}}
+			</div>
 			<div class="flex flex-row py-2 px-4">
 				<div class="basis-3/4 mr-2">
 					{{scene-body}}

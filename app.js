@@ -22,15 +22,20 @@ app.get('/', (req, res) => {
 	});
 });
 
-app.get('/scenes/:sceneID', function (req, res) {
+app.get('/scenes/:sceneID', async function (req, res) {
 	const defaultSceneID = req.params.sceneID;
 
-	campaigns.sceneDetails(defaultSceneID, username, (scene) => {
-			res.render('scenes.html', 
-				{"campaign-name": scene.name, 
+	await campaigns.sceneDetails(defaultSceneID, username, (scene) => {
+			res.render('scenes.html', {
+				 "campaign-name": scene.name, 
 				 "scene-title": scene.title,
 				 "scene-body": scene.body,
-				 "quick-notes": scene.quickNotes });
+				 "quick-notes": scene.quickNotes ,
+				 "next-id": scene.nextSceneID,
+				 "prev-id": scene.prevSceneID,
+				 "has-prev-link": scene.prevSceneID > -1,
+				 "has-next-link": scene.nextSceneID > -1,
+			});
 		}, 
 		() => { res.redirect("/"); }
 	);
