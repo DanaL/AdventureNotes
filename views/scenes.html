@@ -15,22 +15,28 @@
 		<div class="basis-3/4 mr-4">
 			<h1 class="text-lg text-semibold border-b-2 border-blue-800 mb-2">{{campaign-name}}</h1>
 
-			<div class="text-lg">
+			<div class="text-lg flex flex-row">
+				<div class="flex flex-row">
 				{{#has-prev-link}}
 					<a class="text-semibold text-blue-600 text-xl" href="/scenes/{{prev-id}}">&#171;</a>
 				{{/has-prev-link}}
 				{{^has-prev-link}}
 					<span class="text-gray-300 text-xl">&#171;</span>
 				{{/has-prev-link}}
+				</div>
 
-				{{scene-title}} 
+				<div class="flex flex-row px-4">
+				{{scene-title}} <button><img class="object-scale-down h-5 w-4 pl-1" src="/images/edit-icon.svg" alt="edit icon"/></button>
+				</div>
 
+				<div class="flex flex-row">
 				{{#has-next-link}}
 					<a class="text-semibold text-blue-600" href="/scenes/{{next-id}}">&#187;</a>
 				{{/has-next-link}}
 				{{^has-next-link}}
 					<span class="text-gray-300 text-xl">&#187;</span>
 				{{/has-next-link}}
+				</div>
 			</div>
 			<div class="flex flex-row py-2 px-4">
 				<div class="basis-3/4 mr-2">
