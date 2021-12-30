@@ -4,7 +4,7 @@ async function campaignsLinksForUser(username, callback) {
 	const sql = `SELECT C.campaignID, name, sceneID
 				 FROM Campaigns C JOIN Users U ON C.gmID = U.UserID
 				 JOIN (SELECT sceneID, campaignID 
-				 		FROM Scenes S ORDER BY sceneID LIMIT 1) S ON C.campaignID = S.campaignID
+				 		FROM Scenes S ORDER BY scene_order LIMIT 1) S ON C.campaignID = S.campaignID
 				 WHERE username = '${username}'`;
 	
 	const res = await dblib.pool.query(sql);
