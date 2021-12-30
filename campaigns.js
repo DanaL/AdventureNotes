@@ -1,17 +1,15 @@
 const dblib = require('./dblib');
 
-function campaignsLinksForUser(username, callback) {
+async function campaignsLinksForUser(username, callback) {
 	const sql = `SELECT C.campaignID, name, sceneID
 				 FROM Campaigns C JOIN Users U ON C.gmID = U.UserID
 				 JOIN (SELECT sceneID, campaignID 
 				 		FROM Scenes S ORDER BY sceneID LIMIT 1) S ON C.campaignID = S.campaignID
 				 WHERE username = '${username}'`;
 	
-	dblib.pool.query(sql, (err, res) => {
-		if (err) throw err;
+	const res = await dblib.pool.query(sql);
 
-		return callback(res);
-	});
+	return callback(res[0]);
 }
 
 async function nextPrevScenes(scene) {

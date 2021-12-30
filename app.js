@@ -17,17 +17,18 @@ app.use('/images', express.static('views/images'));
 
 const username = 'dana';
 
-app.get('/', (req, res) => {
-	campaigns.campaignsLinksForUser(username, (campaigns) => {
+app.get('/', async (req, res) => {
+	await campaigns.campaignsLinksForUser(username, (campaigns) => {
 		res.status(200).render('index.html', { "campaign-list": campaigns });
 	});
 });
 
-app.get('/scenes/:sceneID', async function (req, res) {
+app.get('/scenes/:sceneID', async (req, res) => {
 	const defaultSceneID = req.params.sceneID;
 
 	await campaigns.sceneDetails(defaultSceneID, username, (scene) => {
 			res.render('scenes.html', {
+				 "page-title": scene.name,
 				 "campaign-name": scene.name, 
 				 "scene-title": scene.title,
 				 "scene-body": scene.body,
