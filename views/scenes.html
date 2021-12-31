@@ -41,6 +41,7 @@
 			<div class="flex flex-row py-2 px-4">
 				<div class="mr-2">
 					 <button id="edit"><img class="object-scale-down h-5 w-4 pl-1" src="/images/edit-icon.svg" alt="edit icon"/></button>
+					 <button id="save"><img class="object-scale-down h-5 w-5 pl-1" src="/images/floppy_disk.svg" alt="save icon"/></button>
 				</div>
 				<div id="mainText" class="basis-3/4 mr-2">
 					{{scene-body}}
@@ -66,25 +67,43 @@
 
 	<script>
 		let editMode = false;
-		document.getElementById("edit").addEventListener("click", function() {
+		document.getElementById("save").style.display = "none";
+
+		function switchIcons() {
+			if (editMode) {
+				document.getElementById("edit").style.display = "none";
+				document.getElementById("save").style.display = "inline";
+			}
+			else {
+				document.getElementById("edit").style.display = "inline";
+				document.getElementById("save").style.display = "none";
+			}
+		}
+
+		document.getElementById("edit").addEventListener("click", () => {
 			if (!editMode) {
 				var txt = document.getElementById("mainText").innerText;
 				var editBox = document.createElement("TEXTAREA");
 				editBox.id = "editArea";
 				var textNode = document.createTextNode(txt);
 				editBox.appendChild(textNode);
-				editBox.className = "w-full h-96 border border-solid border-grey-800";
+				editBox.className = "w-full h-96 border border-solid border-grey-800 p-1";
 				document.getElementById("mainText").innerHTML = "";
 				document.getElementById("mainText").appendChild(editBox);
 
 				editBox.focus();
 				editBox.setSelectionRange(editBox.value.length, editBox.value.length);
 				editMode = true;
-			} 
-			else {
-				var txt = document.getElementById("editArea").value;
-				alert(txt);
+
+				switchIcons();
 			}
+		});
+
+		document.getElementById("save").addEventListener("click", () => {
+			var txt = document.getElementById("editArea").value;
+			alert(txt);
+			editMode = false;
+			switchIcons();
 		});
 	</script>
 </body>
