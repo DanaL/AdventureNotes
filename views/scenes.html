@@ -7,13 +7,14 @@
 </head>
 
 <body>
-	<div class="p-2 bg-blue-200">
+	<div class="p-2 bg-blue-200 border-b-2 border-blue-800">
 		<h1 class="text-white text-xl"><a href="/">Dana's Adventure Notes App</a></h1>
 	</div>
 
+	<form id="mainForm" action="/scenes/{{scene-id}}" method="post">
 	<div class="p-2 flex flex-row">
 		<div class="basis-3/4 mr-4">
-			<h1 class="text-lg text-semibold border-b-2 border-blue-800 mb-2">{{campaign-name}}</h1>
+			<h1 class="text-lg text-semibold mb-2">{{campaign-name}}</h1>
 
 			<div class="text-lg flex flex-row">
 				<div class="flex flex-row">
@@ -47,7 +48,7 @@
 					{{scene-body}}
 				</div>
 				<div class="basis-1/4">
-					<textarea id="quickNotesBox" class="
+					<textarea id="quickNotesBox" name="quickNotesBox" class="
 						w-full px-3 py-1.5 text-sm text-left
 						font-normal text-gray-400 bg-white 
 						border border-solid border-gray-300 rounded
@@ -60,23 +61,29 @@
 		</div class="basis-1/4">
 		<div>
 			Side column
-			<br/><br/></br>
-			stuff
 		</div>
 	</div>
+	</form>
 
 	<script>
 		let editMode = false;
 		document.getElementById("save").style.display = "none";
 
 		function switchIcons() {
+			const edit = document.getElementById("edit")
+			const save = document.getElementById("save")
+
 			if (editMode) {
-				document.getElementById("edit").style.display = "none";
-				document.getElementById("save").style.display = "inline";
+				edit.style.display = "none";
+				edit.disabled = true;
+				save.style.display = "inline";
+				save.disabled = false;
 			}
 			else {
-				document.getElementById("edit").style.display = "inline";
-				document.getElementById("save").style.display = "none";
+				edit.style.display = "inline";
+				edit.disabled = false;
+				save.style.display = "none";
+				save.disabled = true;
 			}
 		}
 
@@ -85,6 +92,7 @@
 				var txt = document.getElementById("mainText").innerText;
 				var editBox = document.createElement("TEXTAREA");
 				editBox.id = "editArea";
+				editBox.setAttribute("name","editArea");
 				var textNode = document.createTextNode(txt);
 				editBox.appendChild(textNode);
 				editBox.className = "w-full h-96 border border-solid border-grey-800 p-1";
@@ -101,9 +109,19 @@
 
 		document.getElementById("save").addEventListener("click", () => {
 			var txt = document.getElementById("editArea").value;
-			alert(txt);
+			const main = document.getElementById("mainText");
+			/*
+			while (main.firstChild) {
+				main.removeChild(main.lastChild);
+			}
+
+			main.innerText = txt;
+
 			editMode = false;
 			switchIcons();
+			*/
+
+			document.getElementById("mainForm").submit();
 		});
 	</script>
 </body>

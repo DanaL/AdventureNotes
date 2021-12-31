@@ -48,4 +48,11 @@ async function sceneDetails(sceneID, username, callback, onErr) {
 	return callback(scene);
 }
 
-module.exports = { campaignsLinksForUser, sceneDetails };
+async function writeSceneDetails(sceneID, sceneText, quickNotes) {
+	const sql = `UPDATE Scenes
+				 SET body = '${sceneText}', quick_notes = '${quickNotes}'
+				 WHERE sceneID = ${sceneID}`;
+	await dblib.pool.query(sql);
+}
+
+module.exports = { campaignsLinksForUser, sceneDetails, writeSceneDetails };

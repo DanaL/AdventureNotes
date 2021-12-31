@@ -3,7 +3,6 @@ const mustache = require('mustache-express');
 const path = require('path');
 const dblib = require('./dblib');
 const campaigns = require('./campaigns');
-
 const app = express();
 const port = 3000;
 
@@ -23,10 +22,8 @@ app.get('/', async (req, res) => {
 	});
 });
 
-app.get('/scenes/:sceneID', async (req, res) => {
-	const defaultSceneID = req.params.sceneID;
-
-	await campaigns.sceneDetails(defaultSceneID, username, (scene) => {
+async function sendScene(sceneID, res) {
+	await campaigns.sceneDetails(sceneID, username, (scene) => {
 			res.render('scenes.html', {
 				 "page-title": scene.name,
 				 "campaign-name": scene.name, 
@@ -37,15 +34,28 @@ app.get('/scenes/:sceneID', async (req, res) => {
 				 "prev-id": scene.prevSceneID,
 				 "has-prev-link": scene.prevSceneID > -1,
 				 "has-next-link": scene.nextSceneID > -1,
+				 "scene-id": sceneID
 			});
 		}, 
 		() => { res.redirect("/"); }
 	);
+}
+
+app.get('/scenes/:sceneID', async (req, res) => {
+	await sendScene(req.params.sceneID, res);
 })
 
-app.post('/', (req, res) => {
-	console.log("post received.");
-	res.send("Got a POST request!");
+const bodyParser = require('body-parser')
+const up = bodyParser.urlencoded({ extended: false });
+
+app.post('/scenes/:sceneID', up, async (req, res) => {
+	const sceneID = req.params.sceneID;
+
+	// ofc I'm going to have to do form sanitation and such!
+	const sceneText = req.body.editArea;
+	const quickNotes = req.body.quickNotesBox;
+	await campaigns.writeSceneDetails(sceneID, sceneText, quickNotes);
+	await sendScene(sceneID, res);
 });
 
 app.listen(port, () => {
