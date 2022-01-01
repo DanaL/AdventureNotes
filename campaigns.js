@@ -1,4 +1,5 @@
 const dblib = require('./dblib');
+const util = require('./views/scripts/util');
 
 async function campaignsLinksForUser(username, callback) {
 	const sql = `SELECT C.campaignID, name, sceneID
@@ -41,8 +42,9 @@ async function sceneDetails(sceneID, username, callback, onErr) {
 	
 	const [rows, _] = await dblib.pool.query(sql);
 	const si = rows[0];
+	const tweaked = util.toHTML(si.body);
 	let scene = { campaignID: si.campaignID, sceneID: si.sceneID, campaignName: si.name,
-		title: si.title, body: si.body, quickNotes: si.quick_notes };
+		title: si.title, body: tweaked, quickNotes: si.quick_notes };
 	scene = await nextPrevScenes(scene);
 
 	return callback(scene);

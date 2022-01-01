@@ -13,6 +13,7 @@ app.engine('mustache', mustache());
 
 app.use('/styles', express.static('views/styles'));
 app.use('/images', express.static('views/images'));
+app.use('/scripts', express.static('views/scripts'));
 
 const username = 'dana';
 

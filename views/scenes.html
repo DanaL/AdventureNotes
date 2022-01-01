@@ -4,6 +4,7 @@
 	<meta charset="UTF-9" name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<title>Adventure Notes - {{page-title}}</title>
 	<link rel="stylesheet" href="/styles/style.css">
+	<script type="text/javascript" src="/scripts/util.js"></script>
 </head>
 
 <body>
@@ -45,7 +46,7 @@
 					 <button id="save"><img class="object-scale-down h-5 w-5 pl-1" src="/images/floppy_disk.svg" alt="save icon"/></button>
 				</div>
 				<div id="mainText" class="basis-3/4 mr-2">
-					{{scene-body}}
+					{{ &scene-body }}
 				</div>
 				<div class="basis-1/4">
 					<textarea id="quickNotesBox" name="quickNotesBox" class="
@@ -93,7 +94,7 @@
 				var editBox = document.createElement("TEXTAREA");
 				editBox.id = "editArea";
 				editBox.setAttribute("name","editArea");
-				var textNode = document.createTextNode(txt);
+				var textNode = document.createTextNode(toMarkdown(txt));
 				editBox.appendChild(textNode);
 				editBox.className = "w-full h-96 border border-solid border-grey-800 p-1";
 				document.getElementById("mainText").innerHTML = "";
