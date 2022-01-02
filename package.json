@@ -4,7 +4,7 @@
   "description": "Learning about node.js web apps",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "author": "Dana Larose",
   "license": "ISC",
@@ -17,6 +17,7 @@
     "mysql2": "^2.3.3"
   },
   "devDependencies": {
+    "jest": "^27.4.5",
     "nodemon": "^2.0.15",
     "tailwindcss": "^3.0.8"
   }

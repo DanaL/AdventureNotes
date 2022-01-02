@@ -3,6 +3,10 @@ enum ParseState {
 	Italics
 }
 
+function tokenizer(txt: string): string[] {
+	return [];
+}
+
 function toHTML(txt: string): string {
 	let state =  ParseState.Text;
 	let html = "";
@@ -43,4 +47,5 @@ function toMarkdown(html: string): string {
 }
 
 export { toHTML };
+export { tokenizer };
 export { toMarkdown };
