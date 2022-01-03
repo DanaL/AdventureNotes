@@ -24,7 +24,7 @@ test("Test scanText()", () => {
 	let s = t.scanText();
 	expect(s).toEqual("foo");
 
-	t.skipWhitespace();
+	++t.loc;
 
 	s = t.scanText();
 	expect(s).toEqual("b12lah");
@@ -70,14 +70,23 @@ test('Ordered list', () => {
 	res = t.tokenize();
 
 	expect(res[0].type).toBe(tk.TokenType.UnorderedListItem);
+
 	expect(res[1].type).toBe(tk.TokenType.Word);
 	expect(res[1].text).toBe("One");
-	expect(res[2].type).toBe(tk.TokenType.UnorderedListItem);
-	expect(res[3].type).toBe(tk.TokenType.Word);
-	expect(res[3].text).toBe("Two");
-	expect(res[4].type).toBe(tk.TokenType.UnorderedListItem);
-	expect(res[5].type).toBe(tk.TokenType.Word);
-	expect(res[5].text).toBe("Three");
+
+	expect(res[2].type).toBe(tk.TokenType.LineBreak);
+
+	expect(res[3].type).toBe(tk.TokenType.UnorderedListItem);
+
+	expect(res[4].type).toBe(tk.TokenType.Word);
+	expect(res[4].text).toBe("Two");
+
+	expect(res[5].type).toBe(tk.TokenType.LineBreak);
+
+	expect(res[6].type).toBe(tk.TokenType.UnorderedListItem);
+
+	expect(res[7].type).toBe(tk.TokenType.Word);
+	expect(res[7].text).toBe("Three");
 });
 
 test('Test link', () => {
@@ -121,9 +130,34 @@ test('Test scan heading', () => {
 	expect(res[0].type).toBe(tk.TokenType.Heading1);
 	expect(res[0].text).toBe("Header 1");
 
-	expect(res[1].type).toBe(tk.TokenType.Heading2);
-	expect(res[1].text).toBe("A sub-heading");
+	expect(res[1].type).toBe(tk.TokenType.LineBreak);
 
-	expect(res[2].type).toBe(tk.TokenType.Heading3);
-	expect(res[2].text).toBe("Will I even need 3 levels??");
+	expect(res[2].type).toBe(tk.TokenType.Heading2);
+	expect(res[2].text).toBe("A sub-heading");
+
+	expect(res[3].type).toBe(tk.TokenType.LineBreak);
+
+	expect(res[4].type).toBe(tk.TokenType.Heading3);
+	expect(res[4].text).toBe("Will I even need 3 levels??");
 });
+
+test('Test scan linebreaks', () => {
+	const t = new tk.MDTokenizer("Text\n**more text**");
+	res = t.tokenize();
+
+	expect(res[0].type).toBe(tk.TokenType.Word);
+	expect(res[0].text).toBe("Text");
+
+	expect(res[1].type).toBe(tk.TokenType.LineBreak);
+
+	expect(res[2].type).toBe(tk.TokenType.BoldMarker);
+
+	expect(res[3].type).toBe(tk.TokenType.Word);
+	expect(res[3].text).toBe("more");
+
+	expect(res[4].type).toBe(tk.TokenType.Word);
+	expect(res[4].text).toBe("text");
+
+	expect(res[5].type).toBe(tk.TokenType.BoldMarker);
+});
+

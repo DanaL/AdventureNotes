@@ -98,17 +98,19 @@ class MDTokenizer {
 		return this.text.substring(this.start, this.loc);
 	}
 
-	skipWhitespace() {
-		while (this.isWhitespace(this.currChar()))
-			++this.loc;
-	}
-
 	scanToken() {
-		this.skipWhitespace();
+		// I don't use isWhitespace() here because I want to translate <br/>
+		// into <br/>s on the front end to preserve formatting
+		for (; this.currChar() == ' '; ++this.loc)
+			;
 
 		switch (this.currChar()) {
 			case '\0':
 				return;
+			case '\n':
+				this.tokens.push(new Token("", TokenType.LineBreak));
+				++this.loc;
+				break;
 			case '*':
 				if (this.peek() == '*') {
 					this.tokens.push(new Token("", TokenType.BoldMarker));
