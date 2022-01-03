@@ -7,30 +7,28 @@ const toHTML = util.toHTML;
 // But not yet 100% sure that's the behaviour I want for the editor
 test("Test simple text", () => {
 	const t = new tk.MDTokenizer("Some test text.   ");
-	const tokens = t.tokenize();
-
-	const html = toHTML(tokens);
-
+	const html = toHTML(t.tokenize());
 	expect(html).toEqual("Some test text.");
 });
 
 test("Test with line breaks", () => {
 	const t = new tk.MDTokenizer("One\nTwo\nThree");
-	const tokens = t.tokenize();
-
-	const html = toHTML(tokens);
-
+	const html = toHTML(t.tokenize());
 	expect(html).toEqual("One<br/>Two<br/>Three");
 });
 
-
 test("Test headings", () => {
 	let t = new tk.MDTokenizer("# A heading");
-	const tokens = t.tokenize();
-
-	const html = toHTML(tokens);
-
+	let html = toHTML(t.tokenize());
 	expect(html).toEqual("<h1>A heading</h1>");
+
+	t = new tk.MDTokenizer("## A heading");
+	html = toHTML(t.tokenize());
+	expect(html).toEqual("<h2>A heading</h2>");
+
+	t = new tk.MDTokenizer("### A heading");
+	html = toHTML(t.tokenize());
+	expect(html).toEqual("<h3>A heading</h3>");
 });
 
 test("Test bold", () => {
