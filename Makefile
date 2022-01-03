@@ -1,8 +1,11 @@
+LIB = lib/*.ts
+OUTDIR = ./views/scripts
+
 buildsite: 
 	npx tailwindcss -i inputs.css -o views/styles/style.css 
-	tsc tssrc/*.ts -outDir ./views/scripts     
+	tsc $(LIB) -outDir $(OUTDIR)
 
 test:
-	tsc tssrc/*.ts -outDir ./views/scripts     
+	tsc $(LIB) -outDir $(OUTDIR)
 	npm test
 	
