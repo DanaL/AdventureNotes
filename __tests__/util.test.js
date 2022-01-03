@@ -50,3 +50,9 @@ test("Test nested bold/italics", () => {
 	const html = toHTML(t.tokenize());
 	expect(html).toEqual("<strong>bold <em>and italicized</em>!!</strong>");
 });
+
+test("Test escaped characters", () => {
+	let t = new tk.MDTokenizer("\\#foo\\[\\a");
+	const html = toHTML(t.tokenize());
+	expect(html).toEqual("&#92;&#35;foo&#92;&#91;&#92;a");
+});

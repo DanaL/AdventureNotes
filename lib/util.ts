@@ -1,9 +1,32 @@
 import { MDTokenizer, Token, TokenType } from "./tokenizer";
 
 enum State {
-	Normal,
 	Bold,
 	Italic
+}
+
+function toEscapedHTML(token: Token): string {
+	const backslash = "&#92;";
+	switch (token.text) {
+		case '*':
+			return backslash + "&#42;";
+		case '#':
+			return backslash + "&#35;";
+		case '[':
+			return backslash + "&#91;";
+		case ']':
+			return backslash + "&#93;";
+		case '(':
+			return backslash + "&#40;";
+		case ')':
+			return backslash + "&#41;";
+		case '.':
+			return backslash + "&#46;";
+		case '\\':
+			return backslash + backslash;
+		default:
+			return backslash + token.text;
+	}
 }
 
 function toHTML(tokens: Token[]): string {
@@ -59,6 +82,9 @@ function toHTML(tokens: Token[]): string {
 					html += "<em>";
 					stateStack.push(State.Italic)
 				}
+				break;
+			case TokenType.EscapedChar:
+				html += toEscapedHTML(t);
 				break;
 		}
 
