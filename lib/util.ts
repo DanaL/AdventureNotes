@@ -8,7 +8,7 @@ enum State {
 
 function toHTML(tokens: Token[]): string {
 	let prevType: TokenType;
-	let state = State.Normal;
+	let stateStack = [];
 	let html = "";
 
 	for (const t of tokens) {
@@ -37,27 +37,27 @@ function toHTML(tokens: Token[]): string {
 				html += "<h3>" + t.text + "</h3>";
 				break;
 			case TokenType.BoldMarker:
-				if (state != State.Bold) {
+				if (stateStack.length > 0 && stateStack[stateStack.length - 1] == State.Bold) {
+					html += "</strong>";
+					stateStack.pop();
+				} 
+				else {
 					if (prevType == TokenType.Word)
 						html += " ";
 					html += "<strong>";
-					state = State.Bold;
-				} 
-				else {
-					html += "</strong>";
-					state = State.Normal;
+					stateStack.push(State.Bold)
 				}
 				break;
 			case TokenType.ItalicMarker:
-				if (state != State.Italic) {
+				if (stateStack.length > 0 && stateStack[stateStack.length - 1] == State.Italic) {
+					html += "</em>";
+					stateStack.pop();
+				} 
+				else {
 					if (prevType == TokenType.Word)
 						html += " ";
 					html += "<em>";
-					state = State.Italic;
-				}
-				else {
-					html += "</em>";
-					state = State.Normal;
+					stateStack.push(State.Italic)
 				}
 				break;
 		}
@@ -73,5 +73,4 @@ function toMarkdown(html: string): string {
 	return txt;
 }
 
-export { toHTML };
-export { toMarkdown };
+export { toHTML, toMarkdown };
