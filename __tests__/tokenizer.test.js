@@ -64,3 +64,52 @@ test('Test bold', () => {
 	expect(res[5].type).toBe(tokenizer.TokenType.BoldMarker);
 	expect(res[6].text).toBe("stuff!");
 });
+
+test('Ordered list', () => {
+	const t = new tokenizer.MDTokenizer("* One\n* Two\n * Three");
+	res = t.tokenize();
+
+	expect(res[0].type).toBe(tokenizer.TokenType.UnorderedListItem);
+	expect(res[1].type).toBe(tokenizer.TokenType.Word);
+	expect(res[1].text).toBe("One");
+	expect(res[2].type).toBe(tokenizer.TokenType.UnorderedListItem);
+	expect(res[3].type).toBe(tokenizer.TokenType.Word);
+	expect(res[3].text).toBe("Two");
+	expect(res[4].type).toBe(tokenizer.TokenType.UnorderedListItem);
+	expect(res[5].type).toBe(tokenizer.TokenType.Word);
+	expect(res[5].text).toBe("Three");
+});
+
+test('Test link', () => {
+	const t = new tokenizer.MDTokenizer("A link: [link name]  (http://foo.com)");
+	res = t.tokenize();
+
+	expect(res[0].type).toBe(tokenizer.TokenType.Word);
+	expect(res[0].text).toBe("A");
+	expect(res[1].type).toBe(tokenizer.TokenType.Word);
+	expect(res[1].text).toBe("link:");
+	expect(res[2].type).toBe(tokenizer.TokenType.LinkDescStart);
+	expect(res[3].type).toBe(tokenizer.TokenType.Word);
+	expect(res[3].text).toBe("link");
+	expect(res[4].type).toBe(tokenizer.TokenType.Word);
+	expect(res[4].text).toBe("name");
+	expect(res[5].type).toBe(tokenizer.TokenType.LinkDescEnd);
+	expect(res[6].type).toBe(tokenizer.TokenType.LinkUrlStart);
+	expect(res[7].type).toBe(tokenizer.TokenType.Word);
+	expect(res[7].text).toBe("http://foo.com");
+	expect(res[8].type).toBe(tokenizer.TokenType.LinkUrlEnd);
+});
+
+test('Test escaped characters', () => {
+	const t = new tokenizer.MDTokenizer("Test\\*foo\\*");
+	res = t.tokenize();
+	
+	expect(res[0].type).toBe(tokenizer.TokenType.Word);
+	expect(res[0].text).toBe("Test");
+	expect(res[1].type).toBe(tokenizer.TokenType.EscapedChar);
+	expect(res[1].text).toBe("*");
+	expect(res[2].type).toBe(tokenizer.TokenType.Word);
+	expect(res[2].text).toBe("foo");
+	expect(res[3].type).toBe(tokenizer.TokenType.EscapedChar);
+	expect(res[3].text).toBe("*");
+});

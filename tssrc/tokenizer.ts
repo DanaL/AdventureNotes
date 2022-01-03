@@ -3,6 +3,11 @@ enum TokenType {
 	LineBreak,
 	BoldMarker,
 	UnorderedListItem,
+	LinkDescStart,
+	LinkDescEnd,
+	LinkUrlStart,
+	LinkUrlEnd,
+	EscapedChar
 }
 
 class Token {
@@ -45,6 +50,10 @@ class MDTokenizer {
 			case '_':
 			case '=':
 			case '-':
+			case '[':
+			case ']':
+			case '(':
+			case ')':
 				return true;
 			default:
 				return false;
@@ -81,9 +90,28 @@ class MDTokenizer {
 					++this.loc;
 				}
 				break;
+			case '[':
+				this.tokens.push(new Token("", TokenType.LinkDescStart));
+				++this.loc;
+				break;
+			case ']':
+				this.tokens.push(new Token("", TokenType.LinkDescEnd));
+				++this.loc;
+				break;
+			case '(':
+				this.tokens.push(new Token("", TokenType.LinkUrlStart));
+				++this.loc;
+				break;
+			case ')':
+				this.tokens.push(new Token("", TokenType.LinkUrlEnd));
+				++this.loc;
+				break;
+			case '\\':
+				this.tokens.push(new Token(this.peek(), TokenType.EscapedChar));
+				this.loc += 2;
+				break;
 			default:
 				const word = this.scanText();
-				console.log("fuck " + word);
 				this.tokens.push(new Token(word, TokenType.Word));
 				break;
 		}
