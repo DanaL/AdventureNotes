@@ -1,6 +1,8 @@
 enum TokenType {
 	Word,
-	LineBreak
+	LineBreak,
+	BoldMarker,
+	UnorderedListItem,
 }
 
 class Token {
@@ -36,10 +38,23 @@ class MDTokenizer {
 		return (c == ' ' || c == '\n' || c == '\0');
 	}
 
+	isSpecialChar(c: string): boolean {
+		switch (c) {
+			case '\\':
+			case '*':
+			case '_':
+			case '=':
+			case '-':
+				return true;
+			default:
+				return false;
+		}
+	}
+
 	scanText(): string {
 		this.start = this.loc;
 
-		while (!this.isWhitespace(this.currChar()))
+		while (!this.isWhitespace(this.currChar()) && !this.isSpecialChar(this.currChar()))
 			++this.loc;
 	
 		return this.text.substring(this.start, this.loc);
@@ -56,8 +71,19 @@ class MDTokenizer {
 		switch (this.currChar()) {
 			case '\0':
 				return;
+			case '*':
+				if (this.peek() == '*') {
+					this.tokens.push(new Token("", TokenType.BoldMarker));
+					this.loc += 2;
+				}
+				else {
+					this.tokens.push(new Token("", TokenType.UnorderedListItem));
+					++this.loc;
+				}
+				break;
 			default:
 				const word = this.scanText();
+				console.log("fuck " + word);
 				this.tokens.push(new Token(word, TokenType.Word));
 				break;
 		}

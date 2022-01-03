@@ -20,14 +20,14 @@ test("Test peek()", () => {
 });
 
 test("Test scanText()", () => {
-	const t = new tokenizer.MDTokenizer("foo b1*lah");
+	const t = new tokenizer.MDTokenizer("foo b12lah");
 	let s = t.scanText();
 	expect(s).toEqual("foo");
 
 	t.skipWhitespace();
 
 	s = t.scanText();
-	expect(s).toEqual("b1*lah");
+	expect(s).toEqual("b12lah");
 });
 
 test("Test isWhitespace()", () => {
@@ -37,7 +37,6 @@ test("Test isWhitespace()", () => {
 	expect(t.isWhitespace('\0')).toBe(true);
 	expect(t.isWhitespace('a')).toBe(false);
 });
-
 
 test('Basic string split', () => {
 	const t = new tokenizer.MDTokenizer("The quick brown fox");
@@ -53,3 +52,15 @@ test('Basic string split', () => {
 	expect(res[3].type).toBe(tokenizer.TokenType.Word);
 });
 
+test('Test bold', () => {
+	const t = new tokenizer.MDTokenizer("Here is some **bold** stuff!");
+	res = t.tokenize();
+
+	expect(res[0].text).toBe("Here");
+	expect(res[1].text).toBe("is");
+	expect(res[2].text).toBe("some");
+	expect(res[3].type).toBe(tokenizer.TokenType.BoldMarker);
+	expect(res[4].text).toBe("bold");
+	expect(res[5].type).toBe(tokenizer.TokenType.BoldMarker);
+	expect(res[6].text).toBe("stuff!");
+});
