@@ -83,11 +83,24 @@ class MDTokenizer {
 			h = TokenType.Heading3;
 
 		const text = this.text.substring(start, this.loc + 1).trim();
-		const t = new Token(text, h);
-
 		++this.loc;
 
-		return t;
+		return new Token(text, h);
+	}
+
+	// Likewise for lists, I'm going to create all text after a list item indicator to 
+	// end of line as being part of that <li></li> element
+	scanUnorderedListItem(): Token {
+		++this.loc;
+
+		let start = this.loc;
+		while (this.peek() != '\n' && this.peek() != '\0')
+			++this.loc;
+
+		const text = this.text.substring(start, this.loc + 1).trim();
+		++this.loc;
+		
+		return new Token(text, TokenType.UnorderedListItem);
 	}
 
 	scanText(): string {
@@ -118,7 +131,7 @@ class MDTokenizer {
 					this.loc += 2;
 				}
 				else {
-					this.tokens.push(new Token("", TokenType.UnorderedListItem));
+					this.tokens.push(this.scanUnorderedListItem());
 					++this.loc;
 				}
 				break;

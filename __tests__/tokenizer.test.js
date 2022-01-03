@@ -66,27 +66,17 @@ test('Test bold', () => {
 });
 
 test('Ordered list', () => {
-	const t = new tk.MDTokenizer("* One\n* Two\n * Three");
+	const t = new tk.MDTokenizer("* One\n* Two\n * Three and four");
 	res = t.tokenize();
 
 	expect(res[0].type).toBe(tk.TokenType.UnorderedListItem);
+	expect(res[0].text).toEqual("One");
 
-	expect(res[1].type).toBe(tk.TokenType.Word);
-	expect(res[1].text).toBe("One");
+	expect(res[1].type).toBe(tk.TokenType.UnorderedListItem);
+	expect(res[1].text).toEqual("Two");
 
-	expect(res[2].type).toBe(tk.TokenType.LineBreak);
-
-	expect(res[3].type).toBe(tk.TokenType.UnorderedListItem);
-
-	expect(res[4].type).toBe(tk.TokenType.Word);
-	expect(res[4].text).toBe("Two");
-
-	expect(res[5].type).toBe(tk.TokenType.LineBreak);
-
-	expect(res[6].type).toBe(tk.TokenType.UnorderedListItem);
-
-	expect(res[7].type).toBe(tk.TokenType.Word);
-	expect(res[7].text).toBe("Three");
+	expect(res[2].type).toBe(tk.TokenType.UnorderedListItem);
+	expect(res[2].text).toEqual("Three and four");
 });
 
 test('Test link', () => {
