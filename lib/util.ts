@@ -2,7 +2,8 @@ import { MDTokenizer, Token, TokenType } from "./tokenizer";
 
 enum State {
 	Bold,
-	Italic
+	Italic,
+	UnorderedList
 }
 
 function toEscapedHTML(token: Token): string {
@@ -34,7 +35,8 @@ function toHTML(tokens: Token[]): string {
 	let stateStack = [];
 	let html = "";
 
-	for (const t of tokens) {
+	for (let j = 0; j < tokens.length; j++) {
+		const t = tokens[j];
 		switch (t.type) {
 			case TokenType.Word:
 				if (prevType == TokenType.Word)
@@ -85,6 +87,17 @@ function toHTML(tokens: Token[]): string {
 				break;
 			case TokenType.EscapedChar:
 				html += toEscapedHTML(t);
+				break;
+			case TokenType.UnorderedListItem:
+				if (stateStack.length == 0 && stateStack[stateStack.length - 1] != State.UnorderedList) {
+					stateStack.push(State.UnorderedList);
+					html += "<ul>";
+				}
+				html += "<li>" + t.text + "</li>";
+				if (j == tokens.length - 1 || tokens[j + 1].type != TokenType.UnorderedListItem) {
+					html+= "</ul>";
+					stateStack.pop();
+				}
 				break;
 		}
 
