@@ -1,90 +1,71 @@
-enum ParseState {
-	Text,
-	Italics
+import { MDTokenizer, Token, TokenType } from "./tokenizer";
+
+enum State {
+	Normal,
+	Bold,
+	Italic
 }
 
-enum TokenType {
-	Word,
-	LineBreak
-}
-
-enum TokenState {
-	Word,
-	Asterisk,
-	Octothorpe,
-	Linebreak
-}
-
-class Token {
-	text: string;
-	type: TokenType;
-
-	constructor(text: string, type: TokenType) {
-		this.text = text;
-		this.type = type;
-	}
-}
-
-function tokenizer(txt: string): string[] {
-	let tokens = []
-
-	let c = 0;
-	let word = "";
-	while (c < txt.length) {
-		if (txt[c] == ' ') {
-			tokens.push(word);
-			word = "";
-			++c;
-			continue;
-		}
-		
-		word += txt[c];
-
-		/*
-		switch (word) {
-			case "**"
-		}
-		*/
-
-		++c;
-	}
-
-
-	return tokens;
-}
-
-function toHTML(txt: string): string {
-	let state =  ParseState.Text;
+function toHTML(tokens: Token[]): string {
+	let prevType: TokenType;
+	let state = State.Normal;
 	let html = "";
-	let subString = "";
 
-	for (let j = 0; j < txt.length; j++) {
-		switch (state) {
-			case ParseState.Text:
-				if (txt[j] == '\n')
-					html += "<br/>";
-				else if (txt[j] == '_')
-					state = ParseState.Italics; 
-				else
-					html += txt[j];
+	for (const t of tokens) {
+		switch (t.type) {
+			case TokenType.Word:
+				if (prevType == TokenType.Word)
+					html += " ";
+				html += t.text;
 				break;
-			case ParseState.Italics:
-				if (txt[j] == '_') {
-					html += `<em>${subString}</em>`;
-					subString = "";
-					state = ParseState.Text;
+			case TokenType.LineBreak:
+				html += "<br/>";
+				break;
+			case TokenType.Heading1:
+				if (prevType == TokenType.Word)
+					html += " ";
+				html += "<h1>" + t.text + "</h1>";
+				break;
+			case TokenType.Heading2:
+				if (prevType == TokenType.Word)
+					html += " ";
+				html += "<h2>" + t.text + "</h2>";
+				break;
+			case TokenType.Heading3:
+				if (prevType == TokenType.Word)
+					html += " ";
+				html += "<h3>" + t.text + "</h3>";
+				break;
+			case TokenType.BoldMarker:
+				if (state != State.Bold) {
+					if (prevType == TokenType.Word)
+						html += " ";
+					html += "<strong>";
+					state = State.Bold;
+				} 
+				else {
+					html += "</strong>";
+					state = State.Normal;
+				}
+				break;
+			case TokenType.ItalicMarker:
+				if (state != State.Italic) {
+					if (prevType == TokenType.Word)
+						html += " ";
+					html += "<em>";
+					state = State.Italic;
 				}
 				else {
-					subString += txt[j];
+					html += "</em>";
+					state = State.Normal;
 				}
 				break;
 		}
+
+		prevType = t.type;
 	}
 
-	if (subString.length > 0)
-		html += subString;
-
-	return html;
+	return html.trim();
 }
 
 function toMarkdown(html: string): string {
@@ -93,5 +74,4 @@ function toMarkdown(html: string): string {
 }
 
 export { toHTML };
-export { tokenizer };
 export { toMarkdown };

@@ -143,7 +143,7 @@ test('Test scan heading', () => {
 
 test('Test scan linebreaks', () => {
 	const t = new tk.MDTokenizer("Text\n**more text**");
-	res = t.tokenize();
+	const res = t.tokenize();
 
 	expect(res[0].type).toBe(tk.TokenType.Word);
 	expect(res[0].text).toBe("Text");
@@ -161,3 +161,20 @@ test('Test scan linebreaks', () => {
 	expect(res[5].type).toBe(tk.TokenType.BoldMarker);
 });
 
+test('Test scan italics markers', () => {
+	const t = new tk.MDTokenizer("_this is italicized_");
+	const res = t.tokenize();
+
+	expect(res[0].type).toBe(tk.TokenType.ItalicMarker);
+
+	expect(res[1].type).toBe(tk.TokenType.Word);
+	expect(res[1].text).toBe("this");
+
+	expect(res[2].type).toBe(tk.TokenType.Word);
+	expect(res[2].text).toBe("is");
+
+	expect(res[3].type).toBe(tk.TokenType.Word);
+	expect(res[3].text).toBe("italicized");
+
+	expect(res[4].type).toBe(tk.TokenType.ItalicMarker);
+});

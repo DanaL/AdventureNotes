@@ -2,6 +2,7 @@ enum TokenType {
 	Word,
 	LineBreak,
 	BoldMarker,
+	ItalicMarker,
 	UnorderedListItem,
 	LinkDescStart,
 	LinkDescEnd,
@@ -125,6 +126,10 @@ class MDTokenizer {
 				this.tokens.push(new Token("", TokenType.LinkDescStart));
 				++this.loc;
 				break;
+			case '_':
+				this.tokens.push(new Token("", TokenType.ItalicMarker));
+				++this.loc;
+				break;
 			case ']':
 				this.tokens.push(new Token("", TokenType.LinkDescEnd));
 				++this.loc;
@@ -163,4 +168,4 @@ class MDTokenizer {
 	}
 }
 
-export { MDTokenizer, TokenType };
+export { MDTokenizer, Token, TokenType };
