@@ -7,7 +7,10 @@ enum TokenType {
 	LinkDescEnd,
 	LinkUrlStart,
 	LinkUrlEnd,
-	EscapedChar
+	EscapedChar,
+	Heading1,
+	Heading2,
+	Heading3
 }
 
 class Token {
@@ -48,8 +51,7 @@ class MDTokenizer {
 			case '\\':
 			case '*':
 			case '_':
-			case '=':
-			case '-':
+			case '#':
 			case '[':
 			case ']':
 			case '(':
@@ -58,6 +60,33 @@ class MDTokenizer {
 			default:
 				return false;
 		}
+	}
+
+	// For my purposes, a heading starts at an unescaped # character and covers
+	// the rest of the line
+	scanHeading(): Token {
+		let heading: number;
+		for (heading = 0; this.currChar() == '#'; ++this.loc, ++heading)
+			;
+
+		let start = this.loc;
+		while (this.peek() != '\n' && this.peek() != '\0')
+			++this.loc;
+
+		let h: TokenType;
+		if (heading == 1)
+			h = TokenType.Heading1;
+		else if (heading == 2)
+			h = TokenType.Heading2;
+		else
+			h = TokenType.Heading3;
+
+		const text = this.text.substring(start, this.loc + 1).trim();
+		const t = new Token(text, h);
+
+		++this.loc;
+
+		return t;
 	}
 
 	scanText(): string {
@@ -109,6 +138,10 @@ class MDTokenizer {
 			case '\\':
 				this.tokens.push(new Token(this.peek(), TokenType.EscapedChar));
 				this.loc += 2;
+				break;
+			case '#':
+				const token = this.scanHeading();
+				this.tokens.push(token);
 				break;
 			default:
 				const word = this.scanText();

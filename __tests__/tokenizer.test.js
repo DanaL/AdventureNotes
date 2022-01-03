@@ -113,3 +113,17 @@ test('Test escaped characters', () => {
 	expect(res[3].type).toBe(tk.TokenType.EscapedChar);
 	expect(res[3].text).toBe("*");
 });
+
+test('Test scan heading', () => {
+	const t = new tk.MDTokenizer("  # Header 1\n## A sub-heading  \n###Will I even need 3 levels??");
+	res = t.tokenize();
+
+	expect(res[0].type).toBe(tk.TokenType.Heading1);
+	expect(res[0].text).toBe("Header 1");
+
+	expect(res[1].type).toBe(tk.TokenType.Heading2);
+	expect(res[1].text).toBe("A sub-heading");
+
+	expect(res[2].type).toBe(tk.TokenType.Heading3);
+	expect(res[2].text).toBe("Will I even need 3 levels??");
+});
