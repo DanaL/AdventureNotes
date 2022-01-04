@@ -60,3 +60,14 @@ test("Test unordered list", () => {
 	const html = toHTML(t.tokenize());
 	expect(html).toEqual("<ul><li>One</li><li>Two</li><li>Three and four</li></ul>");
 });
+
+test("Test url", () => {
+	let t = new tk.MDTokenizer("[Link to an NPC](/npc/44)");
+	let html = toHTML(t.tokenize());
+	expect(html).toEqual("<a href=\"/npc/44\">Link to an NPC</a>");
+
+	t = new tk.MDTokenizer("[**bold link**](/npc/44)");
+	html = toHTML(t.tokenize());
+	expect(html).toEqual("<a href=\"/npc/44\"><strong>bold link</strong></a>");
+});
+

@@ -3,7 +3,9 @@ import { MDTokenizer, Token, TokenType } from "./tokenizer";
 enum State {
 	Bold,
 	Italic,
-	UnorderedList
+	UnorderedList,
+	Link,
+	LinkDesc
 }
 
 function toEscapedHTML(token: Token): string {
@@ -34,73 +36,96 @@ function toHTML(tokens: Token[]): string {
 	let prevType: TokenType;
 	let stateStack = [];
 	let html = "";
+	let parsed: string;
+	let parsingLink = false;
+	let link: [string, string];
 
 	for (let j = 0; j < tokens.length; j++) {
 		const t = tokens[j];
+		if (!parsingLink)
+			parsed = "";
+
 		switch (t.type) {
 			case TokenType.Word:
 				if (prevType == TokenType.Word)
-					html += " ";
-				html += t.text;
+					parsed += " ";
+				parsed += t.text;
 				break;
 			case TokenType.LineBreak:
-				html += "<br/>";
+				parsed += "<br/>";
 				break;
 			case TokenType.Heading1:
 				if (prevType == TokenType.Word)
-					html += " ";
-				html += "<h1>" + t.text + "</h1>";
+					parsed += " ";
+				parsed += "<h1>" + t.text + "</h1>";
 				break;
 			case TokenType.Heading2:
 				if (prevType == TokenType.Word)
-					html += " ";
-				html += "<h2>" + t.text + "</h2>";
+					parsed += " ";
+				parsed += "<h2>" + t.text + "</h2>";
 				break;
 			case TokenType.Heading3:
 				if (prevType == TokenType.Word)
-					html += " ";
-				html += "<h3>" + t.text + "</h3>";
+					parsed += " ";
+				parsed += "<h3>" + t.text + "</h3>";
 				break;
 			case TokenType.BoldMarker:
 				if (stateStack.length > 0 && stateStack[stateStack.length - 1] == State.Bold) {
-					html += "</strong>";
+					parsed += "</strong>";
 					stateStack.pop();
 				} 
 				else {
 					if (prevType == TokenType.Word)
-						html += " ";
-					html += "<strong>";
+						parsed += " ";
+					parsed += "<strong>";
 					stateStack.push(State.Bold)
 				}
 				break;
 			case TokenType.ItalicMarker:
 				if (stateStack.length > 0 && stateStack[stateStack.length - 1] == State.Italic) {
-					html += "</em>";
+					parsed += "</em>";
 					stateStack.pop();
 				} 
 				else {
 					if (prevType == TokenType.Word)
-						html += " ";
-					html += "<em>";
+						parsed += " ";
+					parsed += "<em>";
 					stateStack.push(State.Italic)
 				}
 				break;
 			case TokenType.EscapedChar:
-				html += toEscapedHTML(t);
+				parsed += toEscapedHTML(t);
 				break;
 			case TokenType.UnorderedListItem:
 				if (stateStack.length == 0 && stateStack[stateStack.length - 1] != State.UnorderedList) {
 					stateStack.push(State.UnorderedList);
-					html += "<ul>";
+					parsed += "<ul>";
 				}
-				html += "<li>" + t.text + "</li>";
+				parsed += "<li>" + t.text + "</li>";
 				if (j == tokens.length - 1 || tokens[j + 1].type != TokenType.UnorderedListItem) {
-					html+= "</ul>";
+					parsed += "</ul>";
 					stateStack.pop();
 				}
 				break;
+			case TokenType.LinkDescStart:
+				parsingLink = true;
+				link = ["", ""];
+				break;
+			case TokenType.LinkDescEnd:
+				link[0] = parsed;
+				parsed = ""; // we have the link desc next tokens should be the url itself
+				break;
+			// I don't actually need TokenType.LinkUrlStart I guess? But it will be using if I want
+			// to include error checking functionaily
+			case TokenType.LinkUrlEnd:
+				link[1] = parsed;
+				parsed = `<a href="${link[1]}">${link[0]}</a>`;
+				parsingLink = false;
+				break;
 		}
 
+		if (!parsingLink)
+			html += parsed;
 		prevType = t.type;
 	}
 
