@@ -65,7 +65,7 @@ test('Test bold', () => {
 	expect(res[6].text).toBe("stuff!");
 });
 
-test('Ordered list', () => {
+test('Bullet list', () => {
 	const t = new tk.MDTokenizer("* One\n* Two\n * Three and four");
 	res = t.tokenize();
 
@@ -77,6 +77,20 @@ test('Ordered list', () => {
 
 	expect(res[2].type).toBe(tk.TokenType.UnorderedListItem);
 	expect(res[2].text).toEqual("Three and four");
+});
+
+test('Numbered list', () => {
+	const t = new tk.MDTokenizer("1. Foo\n3.Bar  \n 2. Test text");
+	res = t.tokenize();
+
+	expect(res[0].type).toBe(tk.TokenType.NumberedListItem);
+	expect(res[0].text).toEqual("Foo");
+
+	expect(res[1].type).toBe(tk.TokenType.NumberedListItem);
+	expect(res[1].text).toEqual("Bar");
+
+	expect(res[2].type).toBe(tk.TokenType.NumberedListItem);
+	expect(res[2].text).toEqual("Test text");
 });
 
 test('Test link', () => {

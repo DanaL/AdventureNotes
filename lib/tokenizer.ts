@@ -4,6 +4,7 @@ enum TokenType {
 	BoldMarker,
 	ItalicMarker,
 	UnorderedListItem,
+	NumberedListItem,
 	LinkDescStart,
 	LinkDescEnd,
 	LinkUrlStart,
@@ -88,19 +89,44 @@ class MDTokenizer {
 		return new Token(text, h);
 	}
 
-	// Likewise for lists, I'm going to create all text after a list item indicator to 
-	// end of line as being part of that <li></li> element
-	scanUnorderedListItem(): Token {
-		++this.loc;
-
-		let start = this.loc;
+	scanToEOL(): string {
+		const start = this.loc;
 		while (this.peek() != '\n' && this.peek() != '\0')
 			++this.loc;
 
 		const text = this.text.substring(start, this.loc + 1).trim();
 		++this.loc;
-		
-		return new Token(text, TokenType.UnorderedListItem);
+
+		return text;
+	}
+
+	// Likewise for lists, I'm going to create all text after a list item indicator to 
+	// end of line as being part of that <li></li> element
+	scanUnorderedListItem(): Token {
+		++this.loc;
+
+		return new Token(this.scanToEOL(), TokenType.UnorderedListItem);
+	}
+
+	scanFromDigit(): Token {
+		let start = this.loc;
+		++this.loc;
+
+		// A numbered list marked will be all digits follow by a ., otherwise it's just
+		// a text token
+		while (this.text[this.loc] >= '0' && this.text[this.loc] <= '9')
+			++this.loc;
+
+		if (this.currChar() == '.') {
+			++this.loc;			
+			const txt = this.scanToEOL();
+			++this.loc;
+			return new Token(txt, TokenType.NumberedListItem);
+		}
+		else {
+			this.loc = this.start;
+			return new Token(this.scanText(), TokenType.Word);
+		}
 	}
 
 	scanText(): string {
@@ -162,6 +188,18 @@ class MDTokenizer {
 			case '#':
 				const token = this.scanHeading();
 				this.tokens.push(token);
+				break;
+			case '0':
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':
+			case '8':
+			case '9':
+				this.tokens.push(this.scanFromDigit());
 				break;
 			default:
 				const word = this.scanText();
