@@ -32,33 +32,39 @@ test("Test headings", () => {
 });
 
 test("Test bold", () => {
-	let t = new tk.MDTokenizer("This **is bold**!");
+	const t = new tk.MDTokenizer("This **is bold**!");
 	const html = toHTML(t.tokenize());
 	expect(html).toEqual("This <strong>is bold</strong>!");
 });
 
 test("Test italics", () => {
-	let t = new tk.MDTokenizer("_italicized_");
+	const t = new tk.MDTokenizer("_italicized_");
 	const html = toHTML(t.tokenize());
 	expect(html).toEqual("<em>italicized</em>");
 });
 
 test("Test nested bold/italics", () => {
-	let t = new tk.MDTokenizer("**bold _and italicized_!!**");
+	const t = new tk.MDTokenizer("**bold _and italicized_!!**");
 	const html = toHTML(t.tokenize());
 	expect(html).toEqual("<strong>bold <em>and italicized</em>!!</strong>");
 });
 
 test("Test escaped characters", () => {
-	let t = new tk.MDTokenizer("\\#foo\\[\\a");
+	const t = new tk.MDTokenizer("\\#foo\\[\\a");
 	const html = toHTML(t.tokenize());
 	expect(html).toEqual("&#92;&#35;foo&#92;&#91;&#92;a");
 });
 
 test("Test unordered list", () => {
-	let t = new tk.MDTokenizer("*One\n* Two\n* Three and four");
+	const t = new tk.MDTokenizer("*One\n* Two\n* Three and four");
 	const html = toHTML(t.tokenize());
 	expect(html).toEqual("<ul><li>One</li><li>Two</li><li>Three and four</li></ul>");
+});
+
+test("Test ordered list", () => {
+	const t = new tk.MDTokenizer("1. Test\n  3. Another item   \n  2. X \n 0. last one");
+	const html = toHTML(t.tokenize());
+	expect(html).toEqual("<ol><li>Test</li><li>Another item</li><li>X</li><li>last one</li></ol>");
 });
 
 test("Test url", () => {

@@ -4,6 +4,7 @@ enum State {
 	Bold,
 	Italic,
 	UnorderedList,
+	OrderedList,
 	Link,
 	LinkDesc
 }
@@ -97,13 +98,24 @@ function toHTML(tokens: Token[]): string {
 				parsed += toEscapedHTML(t);
 				break;
 			case TokenType.UnorderedListItem:
-				if (stateStack.length == 0 && stateStack[stateStack.length - 1] != State.UnorderedList) {
+				if (stateStack.length == 0 || stateStack[stateStack.length - 1] != State.UnorderedList) {
 					stateStack.push(State.UnorderedList);
 					parsed += "<ul>";
 				}
 				parsed += "<li>" + t.text + "</li>";
 				if (j == tokens.length - 1 || tokens[j + 1].type != TokenType.UnorderedListItem) {
 					parsed += "</ul>";
+					stateStack.pop();
+				}
+				break;
+			case TokenType.NumberedListItem:
+				if (stateStack.length == 0 || stateStack[stateStack.length - 1] != State.OrderedList) {
+					stateStack.push(State.OrderedList);
+					parsed += "<ol>";
+				}
+				parsed += "<li>" + t.text + "</li>";
+				if (j == tokens.length - 1 || tokens[j + 1].type != TokenType.NumberedListItem) {
+					parsed += "</ol>";
 					stateStack.pop();
 				}
 				break;
