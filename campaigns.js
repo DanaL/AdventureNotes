@@ -1,5 +1,6 @@
 const dblib = require('./dblib');
 const util = require('./views/scripts/util');
+const tk = require('./views/scripts/tokenizer');
 
 async function campaignsLinksForUser(username, callback) {
 	const sql = `SELECT C.campaignID, name, sceneID
@@ -42,11 +43,13 @@ async function sceneDetails(sceneID, username, callback, onErr) {
 	
 	const [rows, _] = await dblib.pool.query(sql);
 	const si = rows[0];
-	const tweaked = util.toHTML(si.body);
+	const t = new tk.MDTokenizer(si.body);
+	const tweaked = util.toHTML(t.tokenize());
 	let scene = { campaignID: si.campaignID, sceneID: si.sceneID, campaignName: si.name,
 		title: si.title, body: tweaked, quickNotes: si.quick_notes };
 	scene = await nextPrevScenes(scene);
 
+	console.log(scene);
 	return callback(scene);
 }
 
