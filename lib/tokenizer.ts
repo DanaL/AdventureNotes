@@ -12,7 +12,8 @@ enum TokenType {
 	EscapedChar,
 	Heading1,
 	Heading2,
-	Heading3
+	Heading3,
+	Space
 }
 
 class Token {
@@ -141,8 +142,12 @@ class MDTokenizer {
 	scanToken() {
 		// I don't use isWhitespace() here because I want to translate <br/>
 		// into <br/>s on the front end to preserve formatting
-		for (; this.currChar() == ' '; ++this.loc)
+		let whitespaces;
+		for (whitespaces = 0; this.currChar() == ' '; ++this.loc, ++whitespaces)
 			;
+
+		if (whitespaces > 0)
+			this.tokens.push(new Token("", TokenType.Space));
 
 		switch (this.currChar()) {
 			case '\0':

@@ -41,15 +41,20 @@ test("Test isWhitespace()", () => {
 test('Basic string split', () => {
 	const t = new tk.MDTokenizer("The quick brown fox");
 	res = t.tokenize();
-	expect(res.length).toEqual(4);
+	console.log(res);
+	expect(res.length).toEqual(7);
+
 	expect(res[0].text).toBe("The");
 	expect(res[0].type).toBe(tk.TokenType.Word);
-	expect(res[1].text).toBe("quick");
-	expect(res[1].type).toBe(tk.TokenType.Word);
-	expect(res[2].text).toBe("brown");
+	expect(res[1].type).toBe(tk.TokenType.Space);
+	expect(res[2].text).toBe("quick");
 	expect(res[2].type).toBe(tk.TokenType.Word);
-	expect(res[3].text).toBe("fox");
-	expect(res[3].type).toBe(tk.TokenType.Word);
+	expect(res[3].type).toBe(tk.TokenType.Space);
+	expect(res[4].text).toBe("brown");
+	expect(res[4].type).toBe(tk.TokenType.Word);
+	expect(res[5].type).toBe(tk.TokenType.Space);
+	expect(res[6].text).toBe("fox");
+	expect(res[6].type).toBe(tk.TokenType.Word);
 });
 
 test('Test bold', () => {
@@ -57,16 +62,20 @@ test('Test bold', () => {
 	res = t.tokenize();
 
 	expect(res[0].text).toBe("Here");
-	expect(res[1].text).toBe("is");
-	expect(res[2].text).toBe("some");
-	expect(res[3].type).toBe(tk.TokenType.BoldMarker);
-	expect(res[4].text).toBe("bold");
-	expect(res[5].type).toBe(tk.TokenType.BoldMarker);
-	expect(res[6].text).toBe("stuff!");
+	expect(res[1].type).toBe(tk.TokenType.Space);
+	expect(res[2].text).toBe("is");
+	expect(res[3].type).toBe(tk.TokenType.Space);
+	expect(res[4].text).toBe("some");
+	expect(res[5].type).toBe(tk.TokenType.Space);
+	expect(res[6].type).toBe(tk.TokenType.BoldMarker);
+	expect(res[7].text).toBe("bold");
+	expect(res[8].type).toBe(tk.TokenType.BoldMarker);
+	expect(res[9].type).toBe(tk.TokenType.Space);
+	expect(res[10].text).toBe("stuff!");
 });
 
 test('Bullet list', () => {
-	const t = new tk.MDTokenizer("* One\n* Two\n * Three and four");
+	const t = new tk.MDTokenizer("* One\n* Two\n* Three and four");
 	res = t.tokenize();
 
 	expect(res[0].type).toBe(tk.TokenType.UnorderedListItem);
@@ -80,7 +89,7 @@ test('Bullet list', () => {
 });
 
 test('Numbered list', () => {
-	const t = new tk.MDTokenizer("1. Foo\n3.Bar  \n 2. Test text");
+	const t = new tk.MDTokenizer("1. Foo\n3.Bar  \n2. Test text");
 	res = t.tokenize();
 
 	expect(res[0].type).toBe(tk.TokenType.NumberedListItem);
@@ -99,18 +108,22 @@ test('Test link', () => {
 
 	expect(res[0].type).toBe(tk.TokenType.Word);
 	expect(res[0].text).toBe("A");
-	expect(res[1].type).toBe(tk.TokenType.Word);
-	expect(res[1].text).toBe("link:");
-	expect(res[2].type).toBe(tk.TokenType.LinkDescStart);
-	expect(res[3].type).toBe(tk.TokenType.Word);
-	expect(res[3].text).toBe("link");
-	expect(res[4].type).toBe(tk.TokenType.Word);
-	expect(res[4].text).toBe("name");
-	expect(res[5].type).toBe(tk.TokenType.LinkDescEnd);
-	expect(res[6].type).toBe(tk.TokenType.LinkUrlStart);
+	expect(res[1].type).toBe(tk.TokenType.Space);
+	expect(res[2].type).toBe(tk.TokenType.Word);
+	expect(res[2].text).toBe("link:");
+	expect(res[3].type).toBe(tk.TokenType.Space);
+	expect(res[4].type).toBe(tk.TokenType.LinkDescStart);
+	expect(res[5].type).toBe(tk.TokenType.Word);
+	expect(res[5].text).toBe("link");
+	expect(res[6].type).toBe(tk.TokenType.Space);
 	expect(res[7].type).toBe(tk.TokenType.Word);
-	expect(res[7].text).toBe("http://foo.com");
-	expect(res[8].type).toBe(tk.TokenType.LinkUrlEnd);
+	expect(res[7].text).toBe("name");
+	expect(res[8].type).toBe(tk.TokenType.LinkDescEnd);
+	expect(res[9].type).toBe(tk.TokenType.Space);
+	expect(res[10].type).toBe(tk.TokenType.LinkUrlStart);
+	expect(res[11].type).toBe(tk.TokenType.Word);
+	expect(res[11].text).toBe("http://foo.com");
+	expect(res[12].type).toBe(tk.TokenType.LinkUrlEnd);
 });
 
 test('Test escaped characters', () => {
@@ -128,7 +141,7 @@ test('Test escaped characters', () => {
 });
 
 test('Test scan heading', () => {
-	const t = new tk.MDTokenizer("  # Header 1\n## A sub-heading  \n###Will I even need 3 levels??");
+	const t = new tk.MDTokenizer("# Header 1\n## A sub-heading  \n###Will I even need 3 levels??");
 	res = t.tokenize();
 
 	expect(res[0].type).toBe(tk.TokenType.Heading1);
@@ -159,10 +172,12 @@ test('Test scan linebreaks', () => {
 	expect(res[3].type).toBe(tk.TokenType.Word);
 	expect(res[3].text).toBe("more");
 
-	expect(res[4].type).toBe(tk.TokenType.Word);
-	expect(res[4].text).toBe("text");
+	expect(res[4].type).toBe(tk.TokenType.Space);
 
-	expect(res[5].type).toBe(tk.TokenType.BoldMarker);
+	expect(res[5].type).toBe(tk.TokenType.Word);
+	expect(res[5].text).toBe("text");
+
+	expect(res[6].type).toBe(tk.TokenType.BoldMarker);
 });
 
 test('Test scan italics markers', () => {
@@ -173,12 +188,16 @@ test('Test scan italics markers', () => {
 
 	expect(res[1].type).toBe(tk.TokenType.Word);
 	expect(res[1].text).toBe("this");
-
-	expect(res[2].type).toBe(tk.TokenType.Word);
-	expect(res[2].text).toBe("is");
+	
+	expect(res[2].type).toBe(tk.TokenType.Space);
 
 	expect(res[3].type).toBe(tk.TokenType.Word);
-	expect(res[3].text).toBe("italicized");
+	expect(res[3].text).toBe("is");
 
-	expect(res[4].type).toBe(tk.TokenType.ItalicMarker);
+	expect(res[4].type).toBe(tk.TokenType.Space);
+
+	expect(res[5].type).toBe(tk.TokenType.Word);
+	expect(res[5].text).toBe("italicized");
+
+	expect(res[6].type).toBe(tk.TokenType.ItalicMarker);
 });
