@@ -32,9 +32,9 @@ test("Test headings", () => {
 });
 
 test("Test bold", () => {
-	const t = new tk.MDTokenizer("This **is bold**!");
+	const t = new tk.MDTokenizer("This **is a bold** statement!");
 	const html = toHTML(t.tokenize());
-	expect(html).toEqual("This <strong>is bold</strong>!");
+	expect(html).toEqual("This <strong>is a bold</strong> statement!");
 });
 
 test("Test italics", () => {
