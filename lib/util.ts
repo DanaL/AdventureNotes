@@ -48,9 +48,10 @@ function toHTML(tokens: Token[]): string {
 
 		switch (t.type) {
 			case TokenType.Word:
-				if (prevType == TokenType.Word)
-					parsed += " ";
 				parsed += t.text;
+				break;
+			case TokenType.Space:
+				parsed += " ";
 				break;
 			case TokenType.LineBreak:
 				parsed += "<br/>";

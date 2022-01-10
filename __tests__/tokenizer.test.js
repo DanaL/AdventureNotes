@@ -41,7 +41,6 @@ test("Test isWhitespace()", () => {
 test('Basic string split', () => {
 	const t = new tk.MDTokenizer("The quick brown fox");
 	res = t.tokenize();
-	console.log(res);
 	expect(res.length).toEqual(7);
 
 	expect(res[0].text).toBe("The");
@@ -89,17 +88,23 @@ test('Bullet list', () => {
 });
 
 test('Numbered list', () => {
-	const t = new tk.MDTokenizer("1. Foo\n3.Bar  \n2. Test text");
+	const t = new tk.MDTokenizer("1. Test\n  3. Another item   \n2. X \n0. last one");
+
 	res = t.tokenize();
 
 	expect(res[0].type).toBe(tk.TokenType.NumberedListItem);
-	expect(res[0].text).toEqual("Foo");
+	expect(res[0].text).toEqual("Test");
 
-	expect(res[1].type).toBe(tk.TokenType.NumberedListItem);
-	expect(res[1].text).toEqual("Bar");
+	expect(res[1].type).toBe(tk.TokenType.Space);
 
 	expect(res[2].type).toBe(tk.TokenType.NumberedListItem);
-	expect(res[2].text).toEqual("Test text");
+	expect(res[2].text).toEqual("Another item");
+
+	expect(res[3].type).toBe(tk.TokenType.NumberedListItem);
+	expect(res[3].text).toEqual("X");
+
+	expect(res[4].type).toBe(tk.TokenType.NumberedListItem);
+	expect(res[4].text).toEqual("last one");
 });
 
 test('Test link', () => {
