@@ -58,7 +58,7 @@ test("Test escaped characters", () => {
 test("Test unordered list", () => {
 	const t = new tk.MDTokenizer("*One\n* Two\n* Three and four");
 	const html = toHTML(t.tokenize());
-	expect(html).toEqual("<ul><li>One</li><li>Two</li><li>Three and four</li></ul>");
+	expect(html).toEqual("<ul class=\"md-list\"><li>One</li><li>Two</li><li>Three and four</li></ul>");
 });
 
 test("Test ordered list", () => {

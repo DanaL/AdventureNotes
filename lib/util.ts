@@ -108,7 +108,7 @@ function toHTML(tokens: Token[]): string {
 			case TokenType.UnorderedListItem:
 				if (stateStack.length == 0 || stateStack[stateStack.length - 1] != State.UnorderedList) {
 					stateStack.push(State.UnorderedList);
-					parsed += "<ul>";
+					parsed += "<ul class=\"md-list\">";
 				}
 				parsed += "<li>" + t.text + "</li>";
 				if (j == tokens.length - 1 || closeList(tokens[j + 1])) {

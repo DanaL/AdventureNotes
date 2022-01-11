@@ -49,7 +49,6 @@ async function sceneDetails(sceneID, username, callback, onErr) {
 		title: si.title, body: tweaked, quickNotes: si.quick_notes };
 	scene = await nextPrevScenes(scene);
 
-	console.log(scene);
 	return callback(scene);
 }
 
