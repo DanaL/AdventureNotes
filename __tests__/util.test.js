@@ -63,11 +63,8 @@ test("Test unordered list", () => {
 
 test("Test ordered list", () => {
 	const t = new tk.MDTokenizer("1. Test\n  3. Another item   \n  2. X \n 0. last one");
-	const tokens = t.tokenize();
-	console.log(tokens);
-	const html = toHTML(tokens);
-	//const html = toHTML(t.tokenize());
-	expect(html).toEqual("<ol><li>Test</li><li>Another item</li><li>X</li><li>last one</li></ol>");
+	const html = toHTML(t.tokenize());
+	expect(html).toEqual("<ol><li>Test</li> <li>Another item</li> <li>X</li> <li>last one</li></ol>");
 });
 
 test("Test url", () => {

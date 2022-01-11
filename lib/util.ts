@@ -33,6 +33,13 @@ function toEscapedHTML(token: Token): string {
 	}
 }
 
+function closeList(token: Token): boolean {
+	const ttype = token.type
+	if (ttype != TokenType.NumberedListItem && ttype != TokenType.UnorderedListItem && ttype != TokenType.Space)
+		return true;
+	return false;
+}
+
 function toHTML(tokens: Token[]): string {
 	let prevType: TokenType;
 	let stateStack = [];
@@ -104,7 +111,7 @@ function toHTML(tokens: Token[]): string {
 					parsed += "<ul>";
 				}
 				parsed += "<li>" + t.text + "</li>";
-				if (j == tokens.length - 1 || tokens[j + 1].type != TokenType.UnorderedListItem) {
+				if (j == tokens.length - 1 || closeList(tokens[j + 1])) {
 					parsed += "</ul>";
 					stateStack.pop();
 				}
@@ -115,10 +122,11 @@ function toHTML(tokens: Token[]): string {
 					parsed += "<ol>";
 				}
 				parsed += "<li>" + t.text + "</li>";
-				if (j == tokens.length - 1 || tokens[j + 1].type != TokenType.NumberedListItem) {
+				if (j == tokens.length - 1 || closeList(tokens[j + 1])) {
 					parsed += "</ol>";
 					stateStack.pop();
 				}
+ 
 				break;
 			case TokenType.LinkDescStart:
 				parsingLink = true;
