@@ -23,7 +23,11 @@ app.get('/', async (req, res) => {
 	});
 });
 
-async function sendScene(sceneID, res) {
+async function sendScene(sceneID, campaignID, res) {
+	if (sceneID == -1) {
+		sceneID = await campaigns.newEmptyScene(username, campaignID);
+	}
+
 	await campaigns.sceneDetails(sceneID, username, (scene) => {
 			res.render('scenes.html', {
 				 "page-title": scene.name,
@@ -35,28 +39,30 @@ async function sendScene(sceneID, res) {
 				 "prev-id": scene.prevSceneID,
 				 "has-prev-link": scene.prevSceneID > -1,
 				 "has-next-link": scene.nextSceneID > -1,
-				 "scene-id": sceneID
+				 "scene-id": sceneID,
+				 "campaign-id": campaignID
 			});
 		}, 
 		() => { res.redirect("/"); }
 	);
 }
 
-app.get('/scenes/:sceneID', async (req, res) => {
-	await sendScene(req.params.sceneID, res);
+app.get('/scenes/:sceneID/:campaignID', async (req, res) => {
+	await sendScene(req.params.sceneID, req.params.campaignID, res);
 })
 
 const bodyParser = require('body-parser')
 const up = bodyParser.urlencoded({ extended: false });
 
-app.post('/scenes/:sceneID', up, async (req, res) => {
+app.post('/scenes/:sceneID/:campaignID', up, async (req, res) => {
 	const sceneID = req.params.sceneID;
+	const campaignID = req.params.campaignID;
 
 	// ofc I'm going to have to do form sanitation and such!
 	const sceneText = req.body.editArea;
 	const quickNotes = req.body.quickNotesBox;
 	await campaigns.writeSceneDetails(sceneID, sceneText, quickNotes);
-	await sendScene(sceneID, res);
+	await sendScene(sceneID, campaignID, res);
 });
 
 app.listen(port, () => {

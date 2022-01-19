@@ -2,10 +2,18 @@ const dblib = require('./dblib');
 const util = require('./views/scripts/util');
 const tk = require('./views/scripts/tokenizer');
 
+async function newEmptyScene(username, campaignID) {
+	const sql = `INSERT INTO Scenes (campaignID, title, scene_order)
+				 VALUES (${campaignID}, 'New scene', 1);`;
+	const res = await dblib.pool.query(sql);
+
+	return res[0].insertId;
+}
+
 async function campaignsLinksForUser(username, callback) {
-	const sql = `SELECT C.campaignID, name, sceneID
+	const sql = `SELECT C.campaignID, name, IFNULL(sceneID, -1) AS sceneID
 				 FROM Campaigns C JOIN Users U ON C.gmID = U.UserID
-				 JOIN (SELECT sceneID, campaignID 
+				 LEFT JOIN (SELECT sceneID, campaignID 
 				 		FROM Scenes S ORDER BY scene_order LIMIT 1) S ON C.campaignID = S.campaignID
 				 WHERE username = '${username}'`;
 	
@@ -59,4 +67,4 @@ async function writeSceneDetails(sceneID, sceneText, quickNotes) {
 	await dblib.pool.query(sql);
 }
 
-module.exports = { campaignsLinksForUser, sceneDetails, writeSceneDetails };
+module.exports = { campaignsLinksForUser, sceneDetails, writeSceneDetails, newEmptyScene };
